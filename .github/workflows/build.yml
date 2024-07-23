@@ -1,0 +1,49 @@
+name: Deploy Hugo Site
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Add Hugo theme as submodule
+        run: git submodule add https://github.com/yihui/hugo-xmag.git themes/hugo-xmag
+
+      - name: Copy example site
+        run: cp -r themes/hugo-xmag/exampleSite/* .
+
+      - name: Install Hugo (extended version)
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: 'latest'
+          extended: true
+    
+      - name: Set theme
+        run: echo "theme = 'hugo-xmag'" >> hugo.toml 
+
+    #   - name: Setup .NET Core
+    #     uses: actions/setup-dotnet@v3
+    #     with:
+    #       dotnet-version: '8.x'
+
+    #   - name: Clone newsegg repository
+    #     run: git clone https://github.com/repasscloud/newsegg ./newsegg
+
+    #   - name: Build newsegg application
+    #     run: dotnet build ./newsegg -c Release --runtime linux-x64
+
+    #   - name: Execute newsegg application
+    #     run: ./newsegg/bin/Release/net7.0/linux-x64/newsegg --api-key='2u3j2i39i2u3'
+
+      - name: Build Hugo site
+        run: hugo
+
+    #   - name: Deploy to GitHub Pages
+    #     uses: peaceiris/actions-gh-pages@v3
+    #     with:
+    #       github_token: ${{ secrets.GITHUB_TOKEN }}
+    #       publish_dir: ./public
